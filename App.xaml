@@ -1,0 +1,15 @@
+﻿<Application x:Class="AddImageResolutionToFileName.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:AddImageResolutionToFileName"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <Style x:Key="overallStyleSetting" TargetType="Window">
+            <Setter Property="Icon" Value="resource/app_icon.png"/>
+            <Setter Property="FontFamily" Value="Meiryo UI"/>
+        </Style>
+        <Style x:Key="styleCheckBox" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="BIZ UDGothic"/>
+        </Style>
+    </Application.Resources>
+</Application>
