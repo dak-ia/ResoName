@@ -81,3 +81,9 @@ The software state is saved by automatically generating and saving the Setting.x
 ## Uninstall Method
 Delete the software placed anywhere in the same manner as normal file deletion.  
 If there is a Setting.xml or shortcut, delete it as well.  
+
+
+## issue
+31680×17280の画像でリネームできない問題を発見  
+近い解像度の30720×17280なら問題ない  
+デバッグすると解像度をうまく取得できておらず、直後に「System.IO.IOException: The process cannot access the file because it is being used by another process.」が発生していることを確認。大きすぎて現行方式では取得できないか、記述にミスがある可能性あり。
