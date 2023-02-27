@@ -444,37 +444,37 @@ namespace AddImageResolutionToFileName
                 }
                 if (Regex.IsMatch(fileExtension, "png", RegexOptions.IgnoreCase) && format_png.IsChecked == true)
                 {
-                    newFileName = makeNewMediaFailName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
+                    newFileName = makeNewMediaFileName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
                     writeFileName(writeModeVar, inputFile, fileDirectory + newFileName + fileExtension);
                 }
                 else if (Regex.IsMatch(fileExtension, "(jpg|jpeg|jpe|jfif|jfi|jif|pjpeg|pjp)", RegexOptions.IgnoreCase) && format_jpg.IsChecked == true)
                 {
-                    newFileName = makeNewMediaFailName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
+                    newFileName = makeNewMediaFileName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
                     writeFileName(writeModeVar, inputFile, fileDirectory + newFileName + fileExtension);
                 }
                 else if (Regex.IsMatch(fileExtension, "ico", RegexOptions.IgnoreCase) && format_ico.IsChecked == true)
                 {
-                    newFileName = makeNewMediaFailName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
+                    newFileName = makeNewMediaFileName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
                     writeFileName(writeModeVar, inputFile, fileDirectory + newFileName + fileExtension);
                 }
                 else if (Regex.IsMatch(fileExtension, "(bmp|dib)", RegexOptions.IgnoreCase) && format_bmp.IsChecked == true)
                 {
-                    newFileName = makeNewMediaFailName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
+                    newFileName = makeNewMediaFileName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
                     writeFileName(writeModeVar, inputFile, fileDirectory + newFileName + fileExtension);
                 }
                 else if (Regex.IsMatch(fileExtension, "(tiff|tif)", RegexOptions.IgnoreCase) && format_tiff.IsChecked == true)
                 {
-                    newFileName = makeNewMediaFailName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
+                    newFileName = makeNewMediaFileName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
                     writeFileName(writeModeVar, inputFile, fileDirectory + newFileName + fileExtension);
                 }
                 else if (Regex.IsMatch(fileExtension, "gif", RegexOptions.IgnoreCase) && format_gif.IsChecked == true)
                 {
-                    newFileName = makeNewMediaFailName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
+                    newFileName = makeNewMediaFileName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
                     writeFileName(writeModeVar, inputFile, fileDirectory + newFileName + fileExtension);
                 }
                 else if (Regex.IsMatch(fileExtension, "webp", RegexOptions.IgnoreCase) && format_webp.IsChecked == true)
                 {
-                    newFileName = makeNewMediaFailName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
+                    newFileName = makeNewMediaFileName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
                     writeFileName(writeModeVar, inputFile, fileDirectory + newFileName + fileExtension);
                 }
             }
@@ -505,7 +505,7 @@ namespace AddImageResolutionToFileName
             }
         }
 
-        private string makeNewMediaFailName(string resolutionMode, string position, string fileName, string jointFileName, string jointResolution, string imageAutoWidth, string imageAutoHeight, string imageManualWidth, string imageManualHeight)
+        private string makeNewMediaFileName(string resolutionMode, string position, string fileName, string jointFileName, string jointResolution, string imageAutoWidth, string imageAutoHeight, string imageManualWidth, string imageManualHeight)
         {
             string newName = "";
             string tmpName = "";
