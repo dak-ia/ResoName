@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -16,9 +18,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using System.Xml.Serialization;
 
-namespace AddImageResolutionToFileName
+namespace ResoName
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -42,6 +45,7 @@ namespace AddImageResolutionToFileName
     public partial class MainWindow : Window
     {
         private SettingValue settingValue = new SettingValue();
+        private ProcessingViewModel processingView = new ProcessingViewModel();
         private string settingFilePath = Directory.GetCurrentDirectory();
         private string settingFileName = @"Setting.xml";
         private string settingSplitSymbol = ",";
@@ -68,6 +72,7 @@ namespace AddImageResolutionToFileName
         {
             DataContext = this;
             InitializeComponent();
+            DataContext = processingView;
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             Directory.SetCurrentDirectory(settingFilePath);
             if (File.Exists(settingFileName))
@@ -380,30 +385,67 @@ namespace AddImageResolutionToFileName
             Debug.Print(writeModeVar);
         }
 
-        private void fileDrop(object sender, DragEventArgs e)
+        private async void fileDrop(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            processingWindow.Visibility = Visibility.Visible;
+            e.Effects = DragDropEffects.None;
+            processingView.resetValue();
+            try
             {
-                fileNames = (string[])e.Data.GetData(DataFormats.FileDrop);
-                foreach (string fileName in fileNames)
+                if (e.Data.GetDataPresent(DataFormats.FileDrop))
                 {
-                    if (File.GetAttributes(fileName).HasFlag(FileAttributes.Directory))
+                    fileNames = (string[])e.Data.GetData(DataFormats.FileDrop);
+                    int filesLength = fileNames.Length;
+
+                    processingView.setFilesStatus(0, filesLength);
+                    foreach (string fileName in fileNames)
                     {
-                        Debug.Print("フォルダー");
-                        searchFolder(fileName);
-                    }
-                    else
-                    {
-                        Debug.Print("ファイル");
-                        changeImageFileNameProcess(fileName);
+                        Debug.Print("" + fileName);
+                        try
+                        {
+                            if (File.GetAttributes(fileName).HasFlag(FileAttributes.Directory))
+                            {
+                                Debug.Print("フォルダー");
+                                //await Task.Run(() => searchFolder(fileName));
+                                string[] filesInFolder = Directory.GetFiles(fileName, "*", System.IO.SearchOption.AllDirectories);
+                                int filesInFloderLength = filesInFolder.Length;
+                                processingView.setFilesStatus(0, filesInFloderLength - 1);
+                                foreach (string fileInFolder in filesInFolder)
+                                {
+                                    await Task.Run(() => changeImageFileNameProcess(fileInFolder));
+                                }
+                            }
+                            else
+                            {
+                                Debug.Print("ファイル");
+                                await Task.Run(() => changeImageFileNameProcess(fileName));
+                            }
+                        }
+                        catch (System.IO.FileNotFoundException)
+                        {
+                            Debug.Print("Could not find file");
+                            processingView.setProcessingMessage(0, false, "Could not find file");
+                        }
                     }
                 }
             }
+            catch (System.Runtime.InteropServices.COMException)
+            {
+                Debug.Print("File Name to long");
+                processingView.setProcessingMessage(0, false, "File Name to long");
+            }
+            catch (Exception ex)
+            {
+                Debug.Print(ex.ToString());
+                processingView.setProcessingMessage(0, false, "Other Error");
+            }
+            e.Effects = DragDropEffects.All;
+            processingWindow.Visibility = Visibility.Collapsed;
         }
 
         private void fileDragOver(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop) && manualWidthTextState && manualHeightTextState && jointSymbolFileNameTextState && jointSymbolResolutionTextState)
+            if (e.Data.GetDataPresent(DataFormats.FileDrop) && manualWidthTextState && manualHeightTextState && jointSymbolFileNameTextState && jointSymbolResolutionTextState && processingWindow.Visibility == Visibility.Collapsed)
             {
                 e.Effects = DragDropEffects.All;
             }
@@ -422,6 +464,7 @@ namespace AddImageResolutionToFileName
             string pixelWidth = "";
             string pixelHeight = "";
             string newFileName = "";
+            processingView.setFileName(originalFileName);
             if (Regex.IsMatch(fileExtension, "(png|jpg|jpeg|jpe|jfif|jfi|jif|pjpeg|pjp|ico|bmp|dib|tiff|tif|gif|webp)", RegexOptions.IgnoreCase))
             {
                 try
@@ -442,41 +485,44 @@ namespace AddImageResolutionToFileName
                 {
                     Debug.Print(ex.ToString());
                 }
-                if (Regex.IsMatch(fileExtension, "png", RegexOptions.IgnoreCase) && format_png.IsChecked == true)
+                this.Dispatcher.Invoke((Action)(() =>
                 {
-                    newFileName = makeNewMediaFileName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
-                    writeFileName(writeModeVar, inputFile, fileDirectory + newFileName + fileExtension);
-                }
-                else if (Regex.IsMatch(fileExtension, "(jpg|jpeg|jpe|jfif|jfi|jif|pjpeg|pjp)", RegexOptions.IgnoreCase) && format_jpg.IsChecked == true)
-                {
-                    newFileName = makeNewMediaFileName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
-                    writeFileName(writeModeVar, inputFile, fileDirectory + newFileName + fileExtension);
-                }
-                else if (Regex.IsMatch(fileExtension, "ico", RegexOptions.IgnoreCase) && format_ico.IsChecked == true)
-                {
-                    newFileName = makeNewMediaFileName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
-                    writeFileName(writeModeVar, inputFile, fileDirectory + newFileName + fileExtension);
-                }
-                else if (Regex.IsMatch(fileExtension, "(bmp|dib)", RegexOptions.IgnoreCase) && format_bmp.IsChecked == true)
-                {
-                    newFileName = makeNewMediaFileName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
-                    writeFileName(writeModeVar, inputFile, fileDirectory + newFileName + fileExtension);
-                }
-                else if (Regex.IsMatch(fileExtension, "(tiff|tif)", RegexOptions.IgnoreCase) && format_tiff.IsChecked == true)
-                {
-                    newFileName = makeNewMediaFileName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
-                    writeFileName(writeModeVar, inputFile, fileDirectory + newFileName + fileExtension);
-                }
-                else if (Regex.IsMatch(fileExtension, "gif", RegexOptions.IgnoreCase) && format_gif.IsChecked == true)
-                {
-                    newFileName = makeNewMediaFileName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
-                    writeFileName(writeModeVar, inputFile, fileDirectory + newFileName + fileExtension);
-                }
-                else if (Regex.IsMatch(fileExtension, "webp", RegexOptions.IgnoreCase) && format_webp.IsChecked == true)
-                {
-                    newFileName = makeNewMediaFileName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
-                    writeFileName(writeModeVar, inputFile, fileDirectory + newFileName + fileExtension);
-                }
+                    if (Regex.IsMatch(fileExtension, "png", RegexOptions.IgnoreCase) && format_png.IsChecked == true)
+                    {
+                        newFileName = makeNewMediaFileName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
+                        writeFileName(writeModeVar, inputFile, fileDirectory + newFileName + fileExtension);
+                    }
+                    else if (Regex.IsMatch(fileExtension, "(jpg|jpeg|jpe|jfif|jfi|jif|pjpeg|pjp)", RegexOptions.IgnoreCase) && format_jpg.IsChecked == true)
+                    {
+                        newFileName = makeNewMediaFileName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
+                        writeFileName(writeModeVar, inputFile, fileDirectory + newFileName + fileExtension);
+                    }
+                    else if (Regex.IsMatch(fileExtension, "ico", RegexOptions.IgnoreCase) && format_ico.IsChecked == true)
+                    {
+                        newFileName = makeNewMediaFileName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
+                        writeFileName(writeModeVar, inputFile, fileDirectory + newFileName + fileExtension);
+                    }
+                    else if (Regex.IsMatch(fileExtension, "(bmp|dib)", RegexOptions.IgnoreCase) && format_bmp.IsChecked == true)
+                    {
+                        newFileName = makeNewMediaFileName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
+                        writeFileName(writeModeVar, inputFile, fileDirectory + newFileName + fileExtension);
+                    }
+                    else if (Regex.IsMatch(fileExtension, "(tiff|tif)", RegexOptions.IgnoreCase) && format_tiff.IsChecked == true)
+                    {
+                        newFileName = makeNewMediaFileName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
+                        writeFileName(writeModeVar, inputFile, fileDirectory + newFileName + fileExtension);
+                    }
+                    else if (Regex.IsMatch(fileExtension, "gif", RegexOptions.IgnoreCase) && format_gif.IsChecked == true)
+                    {
+                        newFileName = makeNewMediaFileName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
+                        writeFileName(writeModeVar, inputFile, fileDirectory + newFileName + fileExtension);
+                    }
+                    else if (Regex.IsMatch(fileExtension, "webp", RegexOptions.IgnoreCase) && format_webp.IsChecked == true)
+                    {
+                        newFileName = makeNewMediaFileName(resolutionModeVar, positionModeVar, originalFileName, jointSymbolFileNameVar, jointSymbolResolutionVar, pixelWidth, pixelHeight, manualWidthVar, manualHeightVar);
+                        writeFileName(writeModeVar, inputFile, fileDirectory + newFileName + fileExtension);
+                    }
+                }));
             }
             if (Regex.IsMatch(fileExtension, "mp4", RegexOptions.IgnoreCase))
             {
@@ -494,15 +540,7 @@ namespace AddImageResolutionToFileName
             {
                 Debug.Print("other");
             }
-        }
-
-        private void searchFolder(string path)
-        {
-            string[] files = Directory.GetFiles(path, "*", System.IO.SearchOption.AllDirectories);
-            foreach (string file in files)
-            {
-                changeImageFileNameProcess(file);
-            }
+            processingView.setFilesStatus(1, 0);
         }
 
         private string makeNewMediaFileName(string resolutionMode, string position, string fileName, string jointFileName, string jointResolution, string imageAutoWidth, string imageAutoHeight, string imageManualWidth, string imageManualHeight)
@@ -540,18 +578,18 @@ namespace AddImageResolutionToFileName
             return newName;
         }
 
-        private void writeFileName(string mode, string input, string output)
+        private async void writeFileName(string mode, string input, string output)
         {
             try
             {
                 Debug.Print("WirteMode:" + mode + " InputFile:" + input + " OutputFile:" + output);
                 if (mode == "writeModeCopy")
                 {
-                    File.Copy(input, output, true);
+                    await Task.Run(() => File.Copy(input, output, true));
                 }
                 else if (mode == "writeModeOverwrite")
                 {
-                    File.Move(input, output);
+                    await Task.Run(() => File.Move(input, output));
                 }
             }
             catch (Exception ex)
@@ -647,22 +685,6 @@ namespace AddImageResolutionToFileName
             catch (Exception ex)
             {
                 Debug.Print(ex.ToString());
-            }
-        }
-    }
-
-    public class FileNameRule : ValidationRule
-    {
-        public override ValidationResult Validate(object value, CultureInfo cultureInfo)
-        {
-            Debug.Print("input");
-            if (!Regex.IsMatch((string)value, "([\\\\\\/\\:\\*\\?\\\"\\>\\<\\|])"))
-            {
-                return new ValidationResult(true, null);
-            }
-            else
-            {
-                return new ValidationResult(false, null);
             }
         }
     }

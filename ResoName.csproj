@@ -2,23 +2,31 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>warnings</Nullable>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>resource\app_icon.ico</ApplicationIcon>
+    <PackageIcon>app_icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/dak-ia/ResoName</RepositoryUrl>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+    <Version>0.1.0</Version>
+    <Description>Append Image Resolution to Filename</Description>
+    <Copyright>dak-ia</Copyright>
+    <PackageProjectUrl>https://github.com/dak-ia/ResoName</PackageProjectUrl>
+    <PackageReleaseNotes>first release</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <WarningLevel>7</WarningLevel>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <WarningLevel>7</WarningLevel>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="resource\app_icon.png" />
-  </ItemGroup>
 
   <ItemGroup>
     <Resource Include="resource\app_icon.ico" />
@@ -49,6 +57,14 @@
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="resource\app_icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 

@@ -1,14 +1,15 @@
-# AddImageResolutionToFileName
+# ResoName（old name：AddImageResolutionToFileName）
 ## これは何？
-これは画像ファイルのファイル名に、その画像の解像度（幅と高さ）を追加するだけのソフト。  
-ある日壁紙配布サイトで大量の壁紙をダウンロードしたときに、それぞれ解像度がバラバラだった。  
-ファイルのプロパティを見るのも時間がかかるし、エクスプローラーでホバー表示するのも若干のラグが発生する。  
-ファイル名に解像度が載っていたら選別に便利じゃね？でも、手動でやるのは億劫だよ。そんな時に作ったもの。
+このソフトは、画像ファイルのファイル名にその画像の解像度（幅と高さ）を追加するだけのプログラムです。  
+ある日、壁紙配布サイトから大量の壁紙をダウンロードしたところ、それぞれの解像度がバラバラでした。  
+ファイルのプロパティを確認するのも時間がかかり、エクスプローラーでホバー表示するのも若干のラグが発生します。  
+しかし、ファイル名に解像度が含まれていると、選別が容易になりますが、手動でやるのは面倒。そこで、このソフトを作成しました。
 
 ## どうやって使うの？
-起動したら画像ファイルをウィンドウにドラッグアンドドロップするだけ。  
-画像のドラッグアンドドロップは単一ファイルだけではなく、複数ファイルにも対応。  
-さらにフォルダーを使うと、階層以下の対象のファイルすべてをリネーム可能。  
+このソフトウェアを起動したら、画像ファイルをウィンドウにドラッグアンドドロップするだけで、簡単に変更可能。  
+複数の画像ファイルと、フォルダーのドラッグアンドドロップに対応。  
+フォルダーの場合はそのフォルダー以下のすべてのファイルをリネームできます。
+
 対応フォーマットは  
 ・PNG  
 ・JPEG  
@@ -18,8 +19,9 @@
 ・GIF  
 ・WebP  
 
-マニュアルモードにすると手動で幅と高さを指定可能。  
-ポジションは解像度をつける位置。ファイル名の先頭に追加するか、末尾に追加するかを決められる。  
+マニュアルモードに切り替えると、幅と高さを手動で指定可能。  
+ポジションで解像度を付ける位置を指定。  
+ファイル名の先頭に追加するか、末尾に追加するかを選択可能。
 
 結合記号について（いい名前が思いつかなかった）  
 ファイル名の例：image_128×128.png  
@@ -33,24 +35,26 @@
 
 ## インストール方法
 ダウンロードして、展開して、任意の場所に設置するだけ。
-ソフトの状態はSetting.xmlを同一ディレクトリに自動生成して保存するので、適当なフォルダーに入れてショートカットを作成した方が使いやすいと思う。  
+ソフトの状態はsetting.xmlを同一ディレクトリに自動生成して保存するので、適当なフォルダーに入れてショートカットを作成した方が使いやすいと思います。  
 
 ## アンインストール方法
 任意の場所に設置したソフトを、通常のファイル削除と同様の手順で削除する。  
-Setting.xmlやショートカットがある場合は、同様に削除する。  
+setting.xmlやショートカットがある場合は、同様に削除する。  
 
 
 ## English Ver
 ## What is this?
-This is a software that only adds the resolution (width and height) of an image to the file name of the image file.  
-One day, when downloading a large number of wallpapers from a wallpaper distribution site, the resolutions of each were different.  
-It takes time to look at the file's properties and there is a slight lag when hover with Explorer.  
-It would be convenient if the resolution was included in the file name when sorting, but it's a hassle to do it manually. That's what was made for that time.
+This software is a program that simply adds the resolution (width and height) of an image to the file name of the image file.  
+One day, when I downloaded a large number of wallpapers from a wallpaper distribution site, each wallpaper had a different resolution.  
+Checking the properties of each file takes time, and there is also a slight lag when hovering over them in Explorer.  
+However, if the resolution is included in the file name, it becomes easier to sort them. But doing it manually is a hassle.  
+So, I created this software.
 
 ## How use it?
-Just drag and drop the image files into the window after starting it.  
-The drag and drop of the images is not just for single files, but also for multiple files.   
-Additionally, using folders allows you to rename all of the target files below the hierarchy.  
+Once you launch this software, you can easily make changes by simply dragging and dropping image files onto the window.  
+This software allows you to drag and drop multiple image files as well as folders.  
+In the case of folders, you can rename all files within that folder and its subfolders.
+
 Supported image formats  
 ・PNG  
 ・JPEG  
@@ -75,15 +79,19 @@ The only constraints on each input area are the 9 characters that cannot be used
 There are no other constraints.  
 
 ## Installation Method
-Just download, extract, and place it anywhere.   
-The software state is saved by automatically generating and saving the Setting.xml in the same directory, so it's probably easier to put it in an appropriate folder and create a shortcut.  
+Just download, extract, and place it in any location.  
+The software's status is automatically generated and saved in "setting.xml" in the same directory, so it is recommended to put it in a suitable folder and create a shortcut for ease of use.
 
 ## Uninstall Method
-Delete the software placed anywhere in the same manner as normal file deletion.  
-If there is a Setting.xml or shortcut, delete it as well.  
+To delete the software that has been placed in any location, follow the same procedure as a normal file deletion.  
+If there is a "setting.xml" file or a shortcut, delete them in the same way.
 
 
 ## issue
 31680×17280の画像でリネームできない問題を発見  
 近い解像度の30720×17280なら問題ない  
 デバッグすると解像度をうまく取得できておらず、直後に「System.IO.IOException: The process cannot access the file because it is being used by another process.」が発生していることを確認。大きすぎて現行方式では取得できないか、記述にミスがある可能性あり。
+
+## Version
+- Ver.0.1.0 earlier are beta versions
+- 0.1.0 first release at 2023/05/14(UTC+09)
