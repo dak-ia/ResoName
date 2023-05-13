@@ -47,7 +47,7 @@ namespace ResoName
         private SettingValue settingValue = new SettingValue();
         private ProcessingViewModel processingView = new ProcessingViewModel();
         private string settingFilePath = Directory.GetCurrentDirectory();
-        private string settingFileName = @"Setting.xml";
+        private string settingFileName = @"setting.xml";
         private string settingSplitSymbol = ",";
         private string windowPositionVar = "";
         private string fieldStatusVar = "";
