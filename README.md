@@ -39,7 +39,8 @@
 
 ## アンインストール方法
 任意の場所に設置したソフトを、通常のファイル削除と同様の手順で削除する。  
-setting.xmlやショートカットがある場合は、同様に削除する。  
+setting.xmlやショートカットがあ
+
 
 
 ## English Ver
@@ -94,4 +95,5 @@ If there is a "setting.xml" file or a shortcut, delete them in the same way.
 
 ## Version
 - Ver.0.1.0 earlier are beta versions
-- 0.1.0 first release at 2023/05/14(UTC+09)
+- 0.1.0 2023/05/14(UTC+09) : First release
+- 0.1.1 2023/05/21(UTC+09) : File can be renamed with "Open in File"
