@@ -1,24 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Windows.Threading;
 using System.Xml.Serialization;
 
 namespace ResoName
@@ -46,7 +37,7 @@ namespace ResoName
     {
         private SettingValue settingValue = new SettingValue();
         private ProcessingViewModel processingView = new ProcessingViewModel();
-        private string settingFilePath = Directory.GetCurrentDirectory();
+        private string exeDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? AppDomain.CurrentDomain.BaseDirectory;
         private string settingFileName = @"setting.xml";
         private string settingSplitSymbol = ",";
         private string windowPositionVar = "";
@@ -74,7 +65,7 @@ namespace ResoName
             InitializeComponent();
             DataContext = processingView;
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            Directory.SetCurrentDirectory(settingFilePath);
+            Directory.SetCurrentDirectory(exeDirectory);
             if (File.Exists(settingFileName))
             {
                 try
@@ -246,6 +237,12 @@ namespace ResoName
                 format_gif.IsChecked = true;
                 format_webp.IsChecked = true;
             }
+            string[] exeArgs = Environment.GetCommandLineArgs();
+            if (exeArgs.Length > 1)
+            {
+                exeArgs = exeArgs.Skip(1).ToArray();
+                fileDropEvent(exeArgs);
+            }
         }
 
         private void manualWidthTextChangedEventHandler(object sender, TextChangedEventArgs e)
@@ -256,16 +253,16 @@ namespace ResoName
                 manualWidthTextState = true;
                 if (manualWidthTextState && manualHeightTextState && jointSymbolFileNameTextState && jointSymbolResolutionTextState)
                 {
-                    stateField.Text = "Drop in this window";
-                    stateField.Foreground = new SolidColorBrush(Colors.Black);
-                    stateField.FontSize = 22;
+                    statusField.Text = "Drop in this window";
+                    statusField.Foreground = new SolidColorBrush(Colors.Black);
+                    statusField.FontSize = 22;
                 }
             }
             else
             {
-                stateField.Text = "Can't use \\ / : * ? \" > < |";
-                stateField.Foreground = new SolidColorBrush(Colors.Red);
-                stateField.FontSize = 17;
+                statusField.Text = "Can't use \\ / : * ? \" > < |";
+                statusField.Foreground = new SolidColorBrush(Colors.Red);
+                statusField.FontSize = 17;
                 manualWidthTextState = false;
             }
         }
@@ -278,16 +275,16 @@ namespace ResoName
                 manualHeightTextState = true;
                 if (manualWidthTextState && manualHeightTextState && jointSymbolFileNameTextState && jointSymbolResolutionTextState)
                 {
-                    stateField.Text = "Drop in this window";
-                    stateField.Foreground = new SolidColorBrush(Colors.Black);
-                    stateField.FontSize = 22;
+                    statusField.Text = "Drop in this window";
+                    statusField.Foreground = new SolidColorBrush(Colors.Black);
+                    statusField.FontSize = 22;
                 }
             }
             else
             {
-                stateField.Text = "Can't use \\ / : * ? \" > < |";
-                stateField.Foreground = new SolidColorBrush(Colors.Red);
-                stateField.FontSize = 17;
+                statusField.Text = "Can't use \\ / : * ? \" > < |";
+                statusField.Foreground = new SolidColorBrush(Colors.Red);
+                statusField.FontSize = 17;
                 manualHeightTextState = false;
             }
         }
@@ -300,16 +297,16 @@ namespace ResoName
                 jointSymbolFileNameTextState = true;
                 if (manualWidthTextState && manualHeightTextState && jointSymbolFileNameTextState && jointSymbolResolutionTextState)
                 {
-                    stateField.Text = "Drop in this window";
-                    stateField.Foreground = new SolidColorBrush(Colors.Black);
-                    stateField.FontSize = 22;
+                    statusField.Text = "Drop in this window";
+                    statusField.Foreground = new SolidColorBrush(Colors.Black);
+                    statusField.FontSize = 22;
                 }
             }
             else
             {
-                stateField.Text = "Can't use \\ / : * ? \" > < |";
-                stateField.Foreground = new SolidColorBrush(Colors.Red);
-                stateField.FontSize = 17;
+                statusField.Text = "Can't use \\ / : * ? \" > < |";
+                statusField.Foreground = new SolidColorBrush(Colors.Red);
+                statusField.FontSize = 17;
                 jointSymbolFileNameTextState = false;
             }
         }
@@ -322,16 +319,16 @@ namespace ResoName
                 jointSymbolResolutionTextState = true;
                 if (manualWidthTextState && manualHeightTextState && jointSymbolFileNameTextState && jointSymbolResolutionTextState)
                 {
-                    stateField.Text = "Drop in this window";
-                    stateField.Foreground = new SolidColorBrush(Colors.Black);
-                    stateField.FontSize = 22;
+                    statusField.Text = "Drop in this window";
+                    statusField.Foreground = new SolidColorBrush(Colors.Black);
+                    statusField.FontSize = 22;
                 }
             }
             else
             {
-                stateField.Text = "Can't use \\ / : * ? \" > < |";
-                stateField.Foreground = new SolidColorBrush(Colors.Red);
-                stateField.FontSize = 17;
+                statusField.Text = "Can't use \\ / : * ? \" > < |";
+                statusField.Foreground = new SolidColorBrush(Colors.Red);
+                statusField.FontSize = 17;
                 jointSymbolResolutionTextState = false;
             }
         }
@@ -356,7 +353,6 @@ namespace ResoName
                 manualWidth.IsReadOnly = false;
                 manualHeight.IsReadOnly = false;
             }
-            Debug.Print(resolutionModeVar);
         }
 
         private void positionRadioButton(object sender, RoutedEventArgs e)
@@ -369,7 +365,6 @@ namespace ResoName
             {
                 positionModeVar = "positionEnd";
             }
-            Debug.Print(positionModeVar);
         }
 
         private void writeModeRadioButton(object sender, RoutedEventArgs e)
@@ -382,7 +377,56 @@ namespace ResoName
             {
                 writeModeVar = "writeModeOverwrite";
             }
-            Debug.Print(writeModeVar);
+        }
+
+        public async void fileDropEvent(string[] exeArgs)
+        {
+            processingWindow.Visibility = Visibility.Visible;
+            mainWindow.AllowDrop = false;
+            processingView.resetValue();
+            try
+            {
+                int filesLength = exeArgs.Length;
+                processingView.setFilesStatus(0, filesLength);
+                foreach (string fileName in exeArgs)
+                {
+                    Debug.Print("" + fileName);
+                    try
+                    {
+                        if (File.GetAttributes(fileName).HasFlag(FileAttributes.Directory))
+                        {
+                            string[] filesInFolder = Directory.GetFiles(fileName, "*", System.IO.SearchOption.AllDirectories);
+                            int filesInFloderLength = filesInFolder.Length;
+                            processingView.setFilesStatus(0, filesInFloderLength - 1);
+                            foreach (string fileInFolder in filesInFolder)
+                            {
+                                await Task.Run(() => changeImageFileNameProcess(fileInFolder));
+                            }
+                        }
+                        else
+                        {
+                            await Task.Run(() => changeImageFileNameProcess(fileName));
+                        }
+                    }
+                    catch (System.IO.FileNotFoundException)
+                    {
+                        Debug.Print("Could not find file");
+                        processingView.setProcessingMessage(0, false, "Could not find file");
+                    }
+                }
+            }
+            catch (System.Runtime.InteropServices.COMException)
+            {
+                Debug.Print("File Name to long");
+                processingView.setProcessingMessage(0, false, "File Name to long");
+            }
+            catch (Exception ex)
+            {
+                Debug.Print(ex.ToString());
+                processingView.setProcessingMessage(0, false, "Unknown Error");
+            }
+            mainWindow.AllowDrop = true;
+            processingWindow.Visibility = Visibility.Collapsed;
         }
 
         private async void fileDrop(object sender, DragEventArgs e)
@@ -405,8 +449,6 @@ namespace ResoName
                         {
                             if (File.GetAttributes(fileName).HasFlag(FileAttributes.Directory))
                             {
-                                Debug.Print("フォルダー");
-                                //await Task.Run(() => searchFolder(fileName));
                                 string[] filesInFolder = Directory.GetFiles(fileName, "*", System.IO.SearchOption.AllDirectories);
                                 int filesInFloderLength = filesInFolder.Length;
                                 processingView.setFilesStatus(0, filesInFloderLength - 1);
@@ -417,7 +459,6 @@ namespace ResoName
                             }
                             else
                             {
-                                Debug.Print("ファイル");
                                 await Task.Run(() => changeImageFileNameProcess(fileName));
                             }
                         }
@@ -437,7 +478,7 @@ namespace ResoName
             catch (Exception ex)
             {
                 Debug.Print(ex.ToString());
-                processingView.setProcessingMessage(0, false, "Other Error");
+                processingView.setProcessingMessage(0, false, "Unknown Error");
             }
             e.Effects = DragDropEffects.All;
             processingWindow.Visibility = Visibility.Collapsed;
@@ -478,8 +519,6 @@ namespace ResoName
                     image.Freeze();
                     pixelWidth = image.PixelWidth.ToString();
                     pixelHeight = image.PixelHeight.ToString();
-                    Debug.Print(pixelWidth);
-                    Debug.Print(pixelHeight);
                 }
                 catch (Exception ex)
                 {
@@ -676,7 +715,6 @@ namespace ResoName
             settingValue.settingFieldStatusVar = tmp;
             try
             {
-                Directory.SetCurrentDirectory(settingFilePath);
                 XmlSerializer serializer = new XmlSerializer(typeof(SettingValue));
                 StreamWriter streamWriter = new StreamWriter(settingFileName, false, new UTF8Encoding(false));
                 serializer.Serialize(streamWriter, settingValue);
