@@ -107,7 +107,7 @@
                         <RadioButton Grid.Column="1" Grid.Row="0" FontSize="13" x:Name="writeModeOverwrite" Content="Overwrite" GroupName="writeModeRadio" Checked="writeModeRadioButton"/>
                     </Grid>
                     <Viewbox Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2">
-                        <TextBlock TextAlignment="Center" FontSize="22" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="stateField" Text="Drop in this window"/>
+                        <TextBlock TextAlignment="Center" FontSize="22" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="statusField" Text="Drop in this window"/>
                     </Viewbox>
                 </Grid>
             </TabItem>
